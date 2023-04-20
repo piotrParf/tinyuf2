@@ -358,28 +358,19 @@ int board_uart_write(void const *buf, int len) {
 #ifndef TINYUF2_SELF_UPDATE
 
 // Forward USB interrupt events to TinyUSB IRQ Handler
-//void OTG_FS_IRQHandler(void) { tud_int_handler(0); }
+// void OTG_FS_IRQHandler(void) { tud_int_handler(0); }
+void USB_IRQHandler(void) { tud_int_handler(0); }
 // Forward USB interrupt events to TinyUSB IRQ Handler
-void USB_HP_IRQHandler(void)
-{
-  tud_int_handler(0);
-}
+// void USB_HP_IRQHandler(void) { tud_int_handler(0); }
 
-// USB low-priority interrupt (Channel 75): Triggered by all USB events
-// (Correct transfer, USB reset, etc.). The firmware has to check the
-// interrupt source before serving the interrupt.
-void USB_LP_IRQHandler(void)
-{
-  tud_int_handler(0);
-}
+// // USB low-priority interrupt (Channel 75): Triggered by all USB events
+// // (Correct transfer, USB reset, etc.). The firmware has to check the
+// // interrupt source before serving the interrupt.
+// void USB_LP_IRQHandler(void) { tud_int_handler(0); }
 
-// USB wakeup interrupt (Channel 76): Triggered by the wakeup event from the USB
-// Suspend mode.
-void USBWakeUp_RMP_IRQHandler(void)
-{
-  tud_int_handler(0);
-}
-
+// // USB wakeup interrupt (Channel 76): Triggered by the wakeup event from the USB
+// // Suspend mode.
+// void USBWakeUp_RMP_IRQHandler(void) { tud_int_handler(0); }
 
 #endif
 

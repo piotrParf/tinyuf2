@@ -34,11 +34,12 @@
 //#define FLASH_CACHE_INVALID_ADDR  0xffffffff
 
 #define FLASH_BASE_ADDR   0x08000000UL
-#define SECTOR_SIZE       4096
+#define SECTOR_SIZE       2048
 
+/*256k of flash page size 2k*/
 enum
 {
-  SECTOR_COUNT = 2048/4
+  SECTOR_COUNT = 256/2
 };
 
 static uint8_t erased_sectors[SECTOR_COUNT] = { 0 };
