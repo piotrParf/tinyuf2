@@ -46,19 +46,19 @@ Following is generic compiling information. Each port may require extra set-up a
 To build this for a specific board, we need to change current directory to its port folder
 
 ```
-$ cd ports/stm32f4
+$ cd ports/stm32l4_no_otg
 ```
 
 Firstly we need to get all of submodule dependecy for our board e.g mcu driver with `get-deps` target. You only need to do this once for each mcu family
 
 ```
-make BOARD=feather_stm32f405_express get-deps
+make BOARD=generic_l433 get-deps
 ```
 
 Then compile with `all` target:
 
 ```
-make BOARD=feather_stm32f405_express all
+make BOARD=generic_l433 all
 ```
 
 ### Flash
@@ -66,7 +66,7 @@ make BOARD=feather_stm32f405_express all
 `flash` target will use the default on-board debugger (jlink/cmsisdap/stlink/dfu) to flash the binary, please install those support software in advance. Some board use bootloader/DFU via serial which is required to pass to make command
 
 ```
-$ make BOARD=feather_stm32f405_express flash
+$ make BOARD=generic_l433 flash
 ```
 
 If you use an external debugger, there is `flash-jlink`, `flash-stlink`, `flash-pyocd` which are mostly like to work out of the box for most of the supported board.
@@ -76,7 +76,12 @@ If you use an external debugger, there is `flash-jlink`, `flash-stlink`, `flash-
 To compile for debugging add `DEBUG=1`, this will mostly change the compiler optimization
 
 ```
-$ make BOARD=feather_stm32f405_express DEBUG=1 all
+$ make BOARD=generic_l433 DEBUG=1 all
+```
+Debug with Log on rtt:
+
+```
+$ make BOARD=generic_l433 LOG=2 DEBUG=1 LOGGER=rtt all
 ```
 
 #### Log
@@ -86,7 +91,7 @@ Should you have an issue running example and/or submitting an bug report. You co
 - **LOG=2** and **LOG=3** will print more information with TinyUSB stack events
 
 ```
-$ make BOARD=feather_stm32f405_express LOG=1 all
+$ make BOARD=generic_l433 LOG=1 all
 ```
 
 #### Logger
@@ -103,6 +108,6 @@ By default log message is printed via on-board UART which is slow and take lots 
   - Software viewer should be provided along with your debugger driver.
 
 ```
-$ make BOARD=feather_stm32f405_express LOG=2 LOGGER=rtt all
-$ make BOARD=feather_stm32f405_express LOG=2 LOGGER=swo all
+$ make BOARD=generic_l433 LOG=2 LOGGER=rtt all
+$ make BOARD=generic_l433 LOG=2 LOGGER=swo all
 ```

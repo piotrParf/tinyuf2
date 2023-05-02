@@ -24,7 +24,7 @@ void clock_init(void) {
 
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
- // RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
   /* Enable Power Control clock */
   // Sets the drive strength of 32kHz external crystal, in line with
@@ -41,7 +41,9 @@ void clock_init(void) {
   }
 
   /* Activate PLL with MSI */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
+  RCC_OscInitStruct.OscillatorType =
+      RCC_OSCILLATORTYPE_HSI48 | RCC_OSCILLATORTYPE_MSI;
+  RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
   RCC_OscInitStruct.MSIState = RCC_MSI_ON;
   RCC_OscInitStruct.MSICalibrationValue = 0;
   RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
@@ -65,11 +67,13 @@ void clock_init(void) {
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+
   HAL_CHECK(HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4));
 
-//   PeriphClkInitStruct.PeriphClockSelection =
-//       RCC_PERIPHCLK_USB | RCC_PERIPHCLK_RTC;
-//   PeriphClkInitStruct.UsbClockSelection = RCC_USBCLKSOURCE_MSI;
-//   PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
-//   HAL_CHECK(HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct));
+  // PeriphClkInitStruct.PeriphClockSelection =
+  //     RCC_PERIPHCLK_USB | RCC_PERIPHCLK_RTC;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB;
+  PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_HSI48;
+  // PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+  HAL_CHECK(HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit));
 }

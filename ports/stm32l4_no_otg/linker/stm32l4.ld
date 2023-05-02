@@ -37,15 +37,15 @@ _estack = ORIGIN(RAM) + LENGTH(RAM);    /* end of RAM */
 _board_dfu_dbl_tap = _estack;
 
 /* Generate a link error if heap and stack don't fit into RAM */
-_Min_Heap_Size = 0x200;      /* required amount of heap  */
-_Min_Stack_Size = 0x400; /* required amount of stack */
+_Min_Heap_Size = 0x800;      /* required amount of heap  */
+_Min_Stack_Size = 0x800; /* required amount of stack */
 
 /* Specify the memory areas */
 MEMORY
 {
   RAM (xrw)     : ORIGIN = 0x20000000, LENGTH = 64K - 4 /* reserve 4 bytes for double tap */
-  FLASH (rx)    : ORIGIN = 0x80000000, LENGTH = 64K
-  CONFIG (rx)   : ORIGIN = 0x80100000 - 1024, LENGTH = 256-64K
+  FLASH (rx)    : ORIGIN = 0x08000000, LENGTH = 64K
+  CONFIG (rx)   : ORIGIN = 0x08010000 - 1024, LENGTH = 256-64K
 }
 
 /* Define output sections */
