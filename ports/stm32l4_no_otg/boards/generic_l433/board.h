@@ -28,63 +28,63 @@
 //--------------------------------------------------------------------+
 // Button
 //--------------------------------------------------------------------+
-#define BUTTON_PORT           GPIOC
+#define BUTTON_PORT GPIOC
 //#define BUTTON_PIN            GPIO_PIN_13
 
 //--------------------------------------------------------------------+
 // LED
 //--------------------------------------------------------------------+
 
-#define LED_PORT              GPIOE
+#define LED_PORT GPIOE
 //#define LED_PIN               GPIO_PIN_2
-#define LED_STATE_ON          1
+#define LED_STATE_ON 1
 
 //--------------------------------------------------------------------+
 // Neopixel
 //--------------------------------------------------------------------+
 
 // Number of neopixels
-#define NEOPIXEL_NUMBER       0
+#define NEOPIXEL_NUMBER 0
 
 //--------------------------------------------------------------------+
 // Flash
 //--------------------------------------------------------------------+
 
 // Flash size of the board
-#define BOARD_FLASH_SIZE  (256 * 1024)
+#define MAX_SIZE_WITHOUT_FLASH_FS                                              \
+  240 // in kb flash size and not consider Flash FS at the end of flash
+#define BOARD_FLASH_SIZE (MAX_SIZE_WITHOUT_FLASH_FS * 1024)
 
 //--------------------------------------------------------------------+
 // USB UF2
 //--------------------------------------------------------------------+
 
-#define USB_VID           0x0483
-#define USB_PID           0x5720
-#define USB_MANUFACTURER  "Cartronic"
-#define USB_PRODUCT       "CanSurfer"
+#define USB_VID 0x0483
+#define USB_PID 0x5720
+#define USB_MANUFACTURER "Cartronic"
+#define USB_PRODUCT "CanSurfer"
 
-#define UF2_PRODUCT_NAME  USB_PRODUCT
-#define UF2_BOARD_ID      "CanSurfer_Nano"
-#define UF2_VOLUME_LABEL  "CARTBOOT"
-#define UF2_INDEX_URL     "http://www.tuning-files.org/"
+#define UF2_PRODUCT_NAME USB_PRODUCT
+#define UF2_BOARD_ID "CanSurfer_Nano"
+#define UF2_VOLUME_LABEL "CARTBOOT"
+#define UF2_INDEX_URL "http://www.tuning-files.org/"
 
 //--------------------------------------------------------------------+
 // UART
 //--------------------------------------------------------------------+
 
 //#define UART_DEV              USART1
-#define UART_CLOCK_ENABLE     __HAL_RCC_USART1_CLK_ENABLE
-#define UART_CLOCK_DISABLE    __HAL_RCC_USART1_CLK_DISABLE
-#define UART_GPIO_PORT        GPIOA
-#define UART_GPIO_AF          GPIO_AF7_USART1
-#define UART_TX_PIN           GPIO_PIN_9
-#define UART_RX_PIN           GPIO_PIN_10
+#define UART_CLOCK_ENABLE __HAL_RCC_USART1_CLK_ENABLE
+#define UART_CLOCK_DISABLE __HAL_RCC_USART1_CLK_DISABLE
+#define UART_GPIO_PORT GPIOA
+#define UART_GPIO_AF GPIO_AF7_USART1
+#define UART_TX_PIN GPIO_PIN_9
+#define UART_RX_PIN GPIO_PIN_10
 
 #define USB_NO_VBUS_PIN
 #define USB_NO_USB_ID_PIN
 #define BOARD_STACK_APP_START (0x20000000U)
-#define BOARD_STACK_APP_END   (BOARD_STACK_APP_START+(32*1024))
-
-
+#define BOARD_STACK_APP_END (BOARD_STACK_APP_START + (32 * 1024))
 
 void clock_init(void);
 

@@ -44,8 +44,8 @@ _Min_Stack_Size = 0x800; /* required amount of stack */
 MEMORY
 {
   RAM (xrw)     : ORIGIN = 0x20000000, LENGTH = 64K - 4 /* reserve 4 bytes for double tap */
-  FLASH (rx)    : ORIGIN = 0x08000000, LENGTH = 64K
-  CONFIG (rx)   : ORIGIN = 0x08010000 - 1024, LENGTH = 256-64K
+  FLASH (rx)    : ORIGIN = 0x08000000, LENGTH = 32K
+  CONFIG (rx)   : ORIGIN = 0x08008000 - 1024, LENGTH = 240-32K /* FlashFS in last 16k of flash! */
 }
 
 /* Define output sections */

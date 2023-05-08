@@ -24,6 +24,7 @@
 
 #include "board_api.h"
 #include "tusb.h" // for logging
+#include "board.h"
 
 //--------------------------------------------------------------------+
 //
@@ -37,7 +38,7 @@
 #define SECTOR_SIZE 2048
 
 /*256k of flash page size 2k*/
-enum { SECTOR_COUNT = 256 / 2 };
+enum { SECTOR_COUNT = MAX_SIZE_WITHOUT_FLASH_FS / 2 };
 
 static uint8_t erased_sectors[SECTOR_COUNT] = {0};
 
@@ -140,7 +141,13 @@ void board_flash_init(void) {}
 uint32_t board_flash_size(void) { return BOARD_FLASH_SIZE; }
 
 void board_flash_read(uint32_t addr, void *buffer, uint32_t len) {
-  memcpy(buffer, (void *)addr, len);
+  // Do not read bootloader
+  uint32_t offset=0;
+  if (addr < BOARD_FLASH_APP_START){
+    offset=BOARD_FLASH_APP_START-addr;
+  }
+  memset(buffer,0,offset);
+  memcpy((buffer+offset), (void *)(addr+offset), (len-offset));
 }
 
 void board_flash_flush(void) {}
