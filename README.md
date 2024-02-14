@@ -111,3 +111,30 @@ By default log message is printed via on-board UART which is slow and take lots 
 $ make BOARD=generic_l433 LOG=2 LOGGER=rtt all
 $ make BOARD=generic_l433 LOG=2 LOGGER=swo all
 ```
+
+# STM32L433 TinyUF2 Bootloader encryption
+First block where bootloader checks[256 bytes] is information block. Reset vector is placed after
+```C
+struct{
+ uint32_t fw_version[];
+ uint32_t date_of_compilation[];
+ uint32_t fw_len;
+ uint8_t fw_signature[];
+}
+```
+Each UF2 block when encryped has UF2 set flag 0x10000 meaning encryption enabled.
+Each block is encrypted with AES-CCM so also integrity verified. 
+Nonce is constant and held in the same place as the secret.
+Nonce for each UF2 block is increased by block number | fw_version | date_of_compilation.
+
+Signature of FW is every code byte SHA256 signed by ECDSA256 held in bootloader.
+
+If FW signature is not ok the FW is beeing deleted. 
+
+If signature matches the FW is run.
+
+## TinyUF2 Bootloader signature
+
+Bootloader is signed and signature(with public key) is placed at constant address[TO BE DETERMINED]. 
+Signature is calculated over SHA256 calculated like below:
+hash=SHA256(Bootloader_code1+signature_and_public_key_zeroed_bytes+Bootloader_code2+MCU_UID[12bytes])
