@@ -190,6 +190,30 @@ bool board_app_valid(void) {
   return true;
 }
 
+#define ECDSA_SIGN_LEN (64)
+
+typedef struct __attribute__((packed)) {
+  uint32_t fw_len;
+  uint8_t fw_signature[ECDSA_SIGN_LEN];
+  uint32_t fw_version[2];          // two bytes
+  uint32_t date_of_compilation[6]; // year YYYY, month MM, day DD, hour HH, min
+                                   // MM, sec SS
+} fw_controll_sector_t;
+
+bool board_app_sign_valid(void) {
+  volatile fw_controll_sector_t const *fw_ctrl =
+      (volatile fw_controll_sector_t const *)BOARD_FLASH_CONTROL_SECTOR;
+
+#if defined(TINYUF2_CHECK_SHA256)
+  (void)fw_ctrl;
+  
+#else
+  (void)fw_ctrl;
+#endif
+
+  return true;
+}
+
 void board_app_jump(void) {
   volatile uint32_t const *app_vector =
       (volatile uint32_t const *)BOARD_FLASH_APP_START;

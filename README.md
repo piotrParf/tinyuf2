@@ -115,12 +115,15 @@ $ make BOARD=generic_l433 LOG=2 LOGGER=swo all
 # STM32L433 TinyUF2 Bootloader encryption
 First block where bootloader checks[256 bytes] is information block. Reset vector is placed after
 ```C
-struct{
- uint32_t fw_version[];
- uint32_t date_of_compilation[];
- uint32_t fw_len;
- uint8_t fw_signature[];
-}
+#define ECDSA_SIGN_LEN (64)
+
+typedef struct __attribute__((packed)) {
+  uint32_t fw_len;
+  uint8_t fw_signature[ECDSA_SIGN_LEN];
+  uint32_t fw_version[2];          // two bytes
+  uint32_t date_of_compilation[6]; // year YYYY, month MM, day DD, hour HH, min
+                                   // MM, sec SS
+} fw_controll_sector_t;
 ```
 Each UF2 block when encryped has UF2 set flag 0x10000 meaning encryption enabled.
 Each block is encrypted with AES-CCM so also integrity verified. 

@@ -31,3 +31,9 @@
 [submodule "lib/nxp/mcux-sdk"]
 	path = lib/nxp/mcux-sdk
 	url = https://github.com/NXPmicro/mcux-sdk.git
+[submodule "lib/tinycrypt"]
+	path = lib/tinycrypt
+	url = https://github.com/intel/tinycrypt
+[submodule "lib/tinyp256"]
+	path = lib/tinyp256
+	url = https://github.com/piotrParf/tinyp256

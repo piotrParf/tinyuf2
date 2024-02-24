@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License (MIT)
  *
  * Copyright (c) 2020 Ha Thach (tinyusb.org) for Adafruit Industries
@@ -26,7 +26,7 @@
 #define BOARDS_H_
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 #include "stm32l4xx.h"
@@ -34,25 +34,30 @@
 
 #include "board.h"
 
+#ifndef BOARD_FLASH_CONTROL_SECTOR
+#define BOARD_FLASH_CONTROL_SECTOR 0x08008000
+#define BOARD_FLASH_CONTROL_SECTOR_SIZE 0x100 // 256 bytes for ECC data sector etc data
+#endif
+
 // Flash Start Address of Application
 #ifndef BOARD_FLASH_APP_START
-#define BOARD_FLASH_APP_START   0x08008000
+#define BOARD_FLASH_APP_START 0x08008000 + BOARD_FLASH_CONTROL_SECTOR_SIZE
 #endif
 
 // Double Reset tap to enter DFU
-#define TINYUF2_DFU_DOUBLE_TAP  1
+#define TINYUF2_DFU_DOUBLE_TAP 1
 
 // Brightness percentage from 1 to 255
 #ifndef NEOPIXEL_BRIGHTNESS
-#define NEOPIXEL_BRIGHTNESS   0x10
+#define NEOPIXEL_BRIGHTNESS 0x10
 #endif
 
 #ifdef LED_PIN
-#define TINYUF2_LED             1
+#define TINYUF2_LED 1
 #endif
 
 #ifdef __cplusplus
- }
+}
 #endif
 
 #endif /* BOARDS_H_ */
