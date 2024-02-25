@@ -25,6 +25,8 @@
 #include "board_api.h"
 #include "stm32l433xx.h"
 #include "stm32l4xx.h"
+#include "tinycrypt/sha256.h"
+#include "tinyp256.h"
 #include "tusb.h"
 
 //--------------------------------------------------------------------+
@@ -171,9 +173,14 @@ void board_dfu_complete(void) {
   NVIC_SystemReset();
 }
 
+bool board_app_sign_valid(void);
+
 bool board_app_valid(void) {
   volatile uint32_t const *app_vector =
       (volatile uint32_t const *)BOARD_FLASH_APP_START;
+
+  if (board_app_sign_valid() != true)
+    return false;
 
   // 1st word is stack pointer (should be in SRAM region)
   if (app_vector[0] < BOARD_STACK_APP_START ||
@@ -192,26 +199,72 @@ bool board_app_valid(void) {
 
 #define ECDSA_SIGN_LEN (64)
 
+#define TINYUF2_CHECK_SHA256
+static const uint32_t marker_cmp = 0xA5A55A5A;
+
 typedef struct __attribute__((packed)) {
+  uint32_t marker; // 0xA5A55A5A
   uint32_t fw_len;
   uint8_t fw_signature[ECDSA_SIGN_LEN];
   uint32_t fw_version[2];          // two bytes
   uint32_t date_of_compilation[6]; // year YYYY, month MM, day DD, hour HH, min
                                    // MM, sec SS
-} fw_controll_sector_t;
+} fw_control_sector_t;
+
+/* This is space for bootloader signature for FW and bootloader to selfcheck to
+ * check */
+static const uint8_t BOOTLOADER_SIGNATURE[]
+    __attribute__((section(".BootSignSection"))) __attribute__((used)) = {
+        0xBB, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xAB};
+
+static const uint8_t public_key[] __attribute__((section(".PubKeySection"))) = {
+    0x69, 0x2d, 0x32, 0x6f, 0x1c, 0x40, 0xc6, 0x8a, 0x6f, 0x90, 0x65,
+    0xa2, 0x04, 0x3b, 0x6d, 0xa8, 0xc5, 0xf3, 0xf7, 0x61, 0x9f, 0xd5,
+    0x90, 0xa2, 0x79, 0x36, 0xdf, 0x27, 0x8e, 0x3d, 0x0b, 0x8e, 0x6d,
+    0xb4, 0x95, 0x82, 0xf2, 0x98, 0xe7, 0xa3, 0xe7, 0x18, 0xde, 0xed,
+    0x23, 0x0c, 0x9c, 0x4d, 0xf7, 0x03, 0xe5, 0x04, 0x6a, 0xf6, 0x82,
+    0x5f, 0x71, 0x3a, 0xa4, 0x6c, 0x3f, 0xe6, 0x36, 0x60};
+
+static uint8_t sha256_digest[32];
+struct tc_sha256_state_struct s;
 
 bool board_app_sign_valid(void) {
-  volatile fw_controll_sector_t const *fw_ctrl =
-      (volatile fw_controll_sector_t const *)BOARD_FLASH_CONTROL_SECTOR;
+  volatile fw_control_sector_t const *fw_ctrl =
+      (volatile fw_control_sector_t const *)BOARD_FLASH_CONTROL_SECTOR;
+  (void)BOOTLOADER_SIGNATURE;
 
 #if defined(TINYUF2_CHECK_SHA256)
   (void)fw_ctrl;
-  
+  uint32_t res = fw_ctrl->marker ^ marker_cmp;
+  if (res != 0) {
+    return false;
+  }
+  if (fw_ctrl->fw_len >
+      (BOARD_FLASH_SIZE - (BOARD_FLASH_APP_START & 0x00FFFFFF))) {
+    return false;
+  }
+
+  (void)tc_sha256_init(&s);
+  tc_sha256_update(&s, (const uint8_t *)BOARD_FLASH_APP_START, fw_ctrl->fw_len);
+  (void)tc_sha256_final(sha256_digest, &s);
+
+  tinyp256_t result = tinyp256_verify(public_key, sizeof(public_key),
+                                      sha256_digest, sizeof(sha256_digest),
+                                      (uint8_t *)fw_ctrl->fw_signature, 64);
+  if (result == TINYP256_OK) {
+    return true;
+  }
+
 #else
   (void)fw_ctrl;
 #endif
 
-  return true;
+  return false;
 }
 
 void board_app_jump(void) {

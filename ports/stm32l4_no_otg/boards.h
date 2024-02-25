@@ -36,12 +36,13 @@ extern "C" {
 
 #ifndef BOARD_FLASH_CONTROL_SECTOR
 #define BOARD_FLASH_CONTROL_SECTOR 0x08008000
-#define BOARD_FLASH_CONTROL_SECTOR_SIZE 0x100 // 256 bytes for ECC data sector etc data
+#define BOARD_FLASH_CONTROL_SECTOR_SIZE                                        \
+  0x200 // 512 bytes for ECC data sector etc data
 #endif
 
 // Flash Start Address of Application
 #ifndef BOARD_FLASH_APP_START
-#define BOARD_FLASH_APP_START 0x08008000 + BOARD_FLASH_CONTROL_SECTOR_SIZE
+#define BOARD_FLASH_APP_START (0x08008000 + BOARD_FLASH_CONTROL_SECTOR_SIZE)
 #endif
 
 // Double Reset tap to enter DFU

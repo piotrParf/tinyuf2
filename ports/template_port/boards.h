@@ -33,8 +33,6 @@
 
 #define TINYUF2_DFU_DOUBLE_TAP     0
 
-#define TINYUF2_CHECK_SHA256       
-
 #ifdef __cplusplus
  }
 #endif

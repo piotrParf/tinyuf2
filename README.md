@@ -118,6 +118,7 @@ First block where bootloader checks[256 bytes] is information block. Reset vecto
 #define ECDSA_SIGN_LEN (64)
 
 typedef struct __attribute__((packed)) {
+  uint32_t marker; //0xA5A55A5A
   uint32_t fw_len;
   uint8_t fw_signature[ECDSA_SIGN_LEN];
   uint32_t fw_version[2];          // two bytes

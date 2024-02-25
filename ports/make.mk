@@ -109,6 +109,32 @@ INC += $(TOP)/$(TINYUSB_DIR)
 
 endif # BUILD_NO_TINYUSB
 
+#-------------- Tinycrypt ----------------
+
+TINY_CRYPT_DIR = lib/tinycrypt/lib/source
+
+SRC_C += \
+	$(TINY_CRYPT_DIR)/utils.c \
+	$(TINY_CRYPT_DIR)/sha256.c \
+	$(TINY_CRYPT_DIR)/aes_decrypt.c \
+  $(TINY_CRYPT_DIR)/aes_encrypt.c \
+  $(TINY_CRYPT_DIR)/cbc_mode.c 
+
+INC += $(TOP)/lib/tinycrypt/lib/include
+
+#-------------- Tinyp256 -----------------
+
+CFLAGS += -Ddefault_RNG_defined=0
+
+TINYP256_DIR = lib/tinyp256
+
+SRC_C += \
+	$(TINYP256_DIR)/ecc_dsa.c \
+	$(TINYP256_DIR)/ecc.c \
+  $(TINYP256_DIR)/tinyp256.c 
+
+INC += $(TOP)/${TINYP256_DIR}
+
 #-------------- Debug & Log --------------
 
 # Debugging
@@ -136,8 +162,10 @@ endif
 
 # Compiler Flags
 CFLAGS += \
+  -gdwarf \
   -ggdb \
   -fdata-sections \
+  -fdebug-types-section \
   -ffunction-sections \
   -fsingle-precision-constant \
   -fno-strict-aliasing \

@@ -58,7 +58,7 @@ static bool is_blank(uint32_t addr, uint32_t size) {
 static bool flash_erase_sector(uint32_t addr) {
 
   // skip erasing bootloader
-  TUF2_ASSERT(addr >= BOARD_FLASH_APP_START);
+  TUF2_ASSERT(addr >= BOARD_FLASH_CONTROL_SECTOR);
 
   // starting address from 0x08000000
   uint32_t sector_addr = FLASH_BASE_ADDR;
@@ -104,7 +104,7 @@ static bool flash_erase_sector(uint32_t addr) {
 
 static void flash_write(uint32_t dst, const uint8_t *src, int len) {
   // skip flashing bootloader
-  if (dst < BOARD_FLASH_APP_START) {
+  if (dst < BOARD_FLASH_CONTROL_SECTOR) {
     TUF2_LOG1("Do not flash Bootloader\r\n");
     return;
   }
